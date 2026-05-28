@@ -16,13 +16,18 @@ screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Welcome to the DUNGEON")
 
 #global variables
+starttime = 0
+elapsed = pygame.time.get_ticks()
+
 #font
 font = pygame.font.SysFont("Arial", 40)
+smolfont = pygame.font.SysFont("Arial", 20)
 rooms = []
 
 #colors
 white = (255, 255, 255)
 black = (0, 0, 0)
+grey = (130, 130, 130)
 
 #classes
 #room
@@ -53,10 +58,12 @@ room8 = ("puzzel room", [0, 0, 0, 1], [-1, -1, -1, 6])
 rooms.append(room8)
 room9 = ("room", [0, 1, 0, 1], [-1, 6, -1, 10])
 rooms.append(room9)
-room10 = ("room", [1, 1, 0, 0], [11, 10, -1, -1])
+room10 = ("room", [1, 1, 0, 0], [-1, 10, -1, 11])
 rooms.append(room10)
-bloodroom11 = ("bloodroom", [0, 0, 0, 0], [-1, -1, -1, -1])
-rooms.append(bloodroom11)
+fairyroom11 = ("fairy room", [1, 1, 0, 0], [12, 10, -1, -1])
+rooms.append(fairyroom11)
+bloodroom12 = ("bloodroom", [0, 0, 0, 0], [-1, -1, -1, -1])
+rooms.append(bloodroom12)
 #print(rooms)
 
 #player
@@ -68,56 +75,33 @@ class Adventurer:
     # Set up the character
     def set_up_character(self):
         #non global variables
-        adventurergs = font.render("ᔑ↸⍊ᒷリℸ ̣ ⚍∷ᒷ∷", True, white)
-        adventurersgs = font.render("A↸⍊Eリℸ ̣ ⚍Rᒷ∷!", True, white)
-        adventurerc = font.render("ADVENTURER!!!", True, white)
-        ohgood = font.render("Oh good, your awake...", True, white)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return "quit"
-            
-        screen.blit(adventurergs, (890, 490))
-        time.sleep(1)
-        #screen.fill(black)
-        print ("A↸⍊Eリℸ ̣ ⚍Rᒷ∷!")
-        time.sleep(3)
-        print ("ADVENTURER!!!")
-        time.sleep(0.5)
-        print ("Oh good, you awake...")
-        time.sleep(0.25)
-        remember = input("Do you remember your name? ")
-
-        if remember == "no":
-            self.name = input("Then what would you like me to call you? ")
-            self.gender = input("Are you male (m) or female (f)? ")
-            self.age = int(input("Do you remember how old you were? "))
-            while self.__validate_age(self.age) == False :
-                print (f"{self.name}... you seem to have told me an unrealistic age. Do not lie to me, your age is between 0 and 100.")
-                self.age = int(input("Do you remember how old you *really* were? "))
-
-        elif remember == "yes":
-            self.name = input("Then what is your name adventurer? ")
-            self.gender = input("Are you male (m) or female (f)? ") 
-            self.age = int(input("And finally, how old are you? "))
-            while self.__validate_age(self.age) == False :
-                print ("Either you entered an age which is too old or too young. Dont do it again.")
-                self.age = int(input("How old are you *really*? "))
         
-        pygame.display.flip()
-        clock.tick(30)
-    
-    def __validate_age(self, age):
-        if age < 0 or age > 100:
-            return False
-        else :
-            return True
+        
+        while True:
 
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+            
+            abcremember = input("Do you remember your name? ")
+
+            if abcremember == "no":
+                self.name = input("Then what would you like me to call you? ")
+                
+            elif abcremember == "yes":
+                self.name = input("Then what is your name adventurer? ")
+            
+            else:
+                #kill player INSTANTLY
+                pass
+        
+            pygame.display.flip()
+            clock.tick(30)
         
     def describe(self):
         print (f"Your name: {self.name}")
-        print (f"Your gender: {self.gender}")
-        print (f"Your age: {self.age}")
         
         print (f"You are currently in room {self.room}")
 
@@ -174,37 +158,72 @@ def titlescreen():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if startbtnr.collidepoint(event.pos):
-                    return "main"
+                    return "intro"
 
         pygame.display.flip()
         clock.tick(30)
 
-#main
-def main():
+#intro
+def intro():
     screen.fill(black)
+    starttime = 0
     while True:
         #non global variables
         adventurer = Adventurer()
+        advgs = smolfont.render("A  en   er", True, grey)
+        advgsrect = advgs.get_rect(center=(890, 390))
+        advsgs = smolfont.render(" VENTU ER!", True, grey)
+        advsgsrect = advsgs.get_rect(center=(890, 390))
+        advc = font.render("ADVENTURER!!!", True, white)
+        advcrect = advc.get_rect(center=(890, 390))
+        ohgood = font.render("Oh good, your awake...", True, white)
+        ohgoodrect = ohgood.get_rect(center=(890, 390))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
             
-            adventurer.set_up_character()
-            adventurer.describe()
+        screen.fill(black)
+        screen.blit(advgs, advgsrect)
+        if starttime == 0:
+            starttime = pygame.time.get_ticks()
+        elapsed = pygame.time.get_ticks()-starttime
+        if elapsed >= 1000 and elapsed < 4000:
+            screen.fill(black)
+            screen.blit(advsgs, advsgsrect)
+        elif elapsed >= 4000 and elapsed < 5000:
+            screen.fill(black)
+            screen.blit(advc, advcrect)
+        elif elapsed >= 5000 and elapsed < 6000:
+            screen.fill(black)
+            screen.blit(ohgood, ohgoodrect)
+        elif elapsed >= 6000 and elapsed < 1000:
+            return "naming"
             
         pygame.display.flip()
         clock.tick(30)
 
+#naming the character
+def naming():
+    #non global variables
+    remember = font.render("Do you remember your name?", True, white)
+    while True:
+        screen.fill(black)
+        screen.blit(remember, (100, 100))
+
+
 #state manager
 state = "term"
+adventurer = Adventurer()
 while True:
     if state == "title":
         state = titlescreen()
     elif state == "term":
         state = termwarning()
-    elif state == "main":
-        state == main()
+    elif state == "intro":
+        state == intro()
+    elif state == "naming":
+        state = naming()
     elif state == "quit":
         break
 
