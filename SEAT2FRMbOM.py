@@ -74,17 +74,6 @@ class Adventurer:
         
     # Set up the character
     def set_up_character(self):
-        #non global variables
-        
-        
-        while True:
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-
-            
             abcremember = input("Do you remember your name? ")
 
             if abcremember == "no":
@@ -96,9 +85,6 @@ class Adventurer:
             else:
                 #kill player INSTANTLY
                 pass
-        
-            pygame.display.flip()
-            clock.tick(30)
         
     def describe(self):
         print (f"Your name: {self.name}")
@@ -165,6 +151,7 @@ def titlescreen():
 
 #intro
 def intro():
+    global state
     screen.fill(black)
     starttime = 0
     while True:
@@ -197,20 +184,55 @@ def intro():
         elif elapsed >= 5000 and elapsed < 6000:
             screen.fill(black)
             screen.blit(ohgood, ohgoodrect)
-        elif elapsed >= 6000 and elapsed < 1000:
-            return "naming"
+        elif elapsed >= 6000:
+            state = "naming"
+            break
             
         pygame.display.flip()
         clock.tick(30)
 
 #naming the character
 def naming():
-    #non global variables
-    remember = font.render("Do you remember your name?", True, white)
+    global pname
+    name = ""
     while True:
+        #non global variables
+        remember = font.render("Do you remember your name?", True, white)
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    name = name[:-1]
+                elif event.key == pygame.K_RETURN:
+                    pname = name
+                    name = ""
+                else:
+                    name += event.unicode
+        
+
+        namep2 = font.render(name, True, white)
+
         screen.fill(black)
         screen.blit(remember, (100, 100))
+        screen.blit(namep2, (100, 150))
+    
+        pygame.display.flip()
+        clock.tick(30)
 
+def main():
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return "quit"
+            
+        
+
+        pygame.display.flip()
+        clock.tick(30)
 
 #state manager
 state = "term"
