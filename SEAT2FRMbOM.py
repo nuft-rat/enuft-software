@@ -17,7 +17,7 @@ screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("Welcome to the DUNGEON")
 
 #global variables
-starttime = 0
+start_time = 0
 elapsed = pygame.time.get_ticks()
 directions = ["north", "south", "east", "west"]
 
@@ -44,19 +44,20 @@ class room:
 
 
 #rooms
+# [north, south, east, west]
 spawnroom0 = room("origination point", [1, 0, 0, 0], [1, -1, -1, -1], "")
 rooms.append(spawnroom0)
 armoryroom1 = room("armory room", [1, 0, 0, 0], [2, -1, -1, -1], "")
 rooms.append(armoryroom1)
 dungeonentrance2 = room("dungeon entrance", [1, 0, 0, 0], [3, -1,-1, -1], "")
 rooms.append(dungeonentrance2)
-room3 = room("the mooy room", [0, 0, 1, 1], [-1, -1, 4, 5], "")
+room3 = room("the mooy room", [0, 0, 1, 1], [-1, -1, 5, 4], "")
 rooms.append(room3)
-room4 = room("puzzel room", [0, 0, 0, 1], [-1, -1, -1, 3], "")
+room4 = room("puzzel room", [0, 0, 0, 1], [-1, -1, 3, -1], "")
 rooms.append(room4)
-room5 = room("room", [1, 0, 0, 1], [6, -1, 7, 3], "")
+room5 = room("room", [1, 0, 0, 1], [6, 7, -1, 3], "")
 rooms.append(room5)
-room6 = room("mooy ritural room", [0, 1, 1, 1], [-1, 8, 5, 9], "")
+room6 = room("mooy ritural room", [0, 1, 1, 1], [-1, 5, 8, 9], "")
 rooms.append(room6)
 secretroom7 = room("secret exit!", [1, 0, 0, 0], [5, -1, -1,-1], "")
 rooms.append(secretroom7)
@@ -64,12 +65,10 @@ room8 = room("puzzel room", [0, 0, 0, 1], [-1, -1, -1, 6], "")
 rooms.append(room8)
 room9 = room("room", [0, 1, 0, 1], [-1, 6, -1, 10], "")
 rooms.append(room9)
-room10 = room("room", [1, 1, 0, 0], [-1, 10, -1, 11], "")
-rooms.append(room10)
-fairyroom11 = room("fairy room", [1, 1, 0, 0], [12, 10, -1, -1], "")
-rooms.append(fairyroom11)
-bloodroom12 = room("bloodroom", [0, 0, 0, 0], [-1, -1, -1, -1], "")
-rooms.append(bloodroom12)
+fairyroom10 = room("fairy room", [1, 0, 1, 0], [11, -1, 9, -1], "")
+rooms.append(fairyroom10)
+bloodroom11 = room("bloodroom", [0, 0, 0, 0], [-1, -1, -1, -1], "")
+rooms.append(bloodroom11)
 #print(rooms)
 
 #player
@@ -89,11 +88,11 @@ class Adventurer:
 def termwarning():
     while True:
         #non global variables
-        termtxt = font.render("Please have terminal below as some stuff will be there!", True, white)
+        term_txt = font.render("Please have terminal below as some stuff will be there!", True, white)
         rect1 = pygame.Rect(445, 95, 1000, 55)
         rect2 = pygame.Rect(815, 430, 170, 50)
         cont = font.render("Continue", True, white)
-        contrect = cont.get_rect(center = (900, 450))
+        cont_rect = cont.get_rect(center = (900, 450))
   
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -101,11 +100,11 @@ def termwarning():
         
         pygame.draw.rect(screen, black, rect1)
         pygame.draw.rect(screen, black, rect2)
-        screen.blit(termtxt, (450, 100))
-        screen.blit(cont, contrect)
+        screen.blit(term_txt, (450, 100))
+        screen.blit(cont, cont_rect)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if contrect.collidepoint(event.pos):
+            if cont_rect.collidepoint(event.pos):
                 return "title"
 
         pygame.display.flip()
@@ -116,10 +115,10 @@ def titlescreen():
     screen.fill(black)
     while True:
         #non global variables
-        enuftg = font.render("Enuft Games'", True, white)
-        advgamettl = font.render("Welcome to the DUNGEON", True, white)
-        startbtn = font.render("Enter the DUNGEON", True, white)
-        startbtnr = startbtn.get_rect(center = (230, 300))
+        enuft_games = font.render("Enuft Games'", True, white)
+        adventure_game_title = font.render("Welcome to the DUNGEON", True, white)
+        start_btn = font.render("Enter the DUNGEON", True, white)
+        start_btnr = start_btn.get_rect(center = (230, 300))
         rect1 = pygame.Rect(780, 100, 240, 50)
         rect2 = pygame.Rect(650, 200, 475, 50)
         rect3 = pygame.Rect(50, 275, 370, 50)
@@ -131,12 +130,12 @@ def titlescreen():
             pygame.draw.rect(screen, black, rect1)
             pygame.draw.rect(screen, black, rect2)
             pygame.draw.rect(screen, black, rect3)
-            screen.blit(enuftg, (770, 100))
-            screen.blit(advgamettl, (650, 200))
-            screen.blit(startbtn, startbtnr)
+            screen.blit(enuft_games, (770, 100))
+            screen.blit(adventure_game_title, (650, 200))
+            screen.blit(start_btn, start_btnr)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if startbtnr.collidepoint(event.pos):
+                if start_btnr.collidepoint(event.pos):
                     return "intro"
 
         pygame.display.flip()
@@ -148,33 +147,33 @@ def intro():
     starttime = 0
     while True:
         #non global variables
-        advgs = smolfont.render("A  en   er", True, grey)
-        advgsrect = advgs.get_rect(center=(890, 390))
-        advsgs = smolfont.render(" VENTU ER!", True, grey)
-        advsgsrect = advsgs.get_rect(center=(890, 390))
-        advc = font.render("ADVENTURER!!!", True, white)
-        advcrect = advc.get_rect(center=(890, 390))
-        ohgood = font.render("Oh good, your awake...", True, white)
-        ohgoodrect = ohgood.get_rect(center=(890, 390))
+        adventurer_txt1 = smolfont.render("A  en   er", True, grey)
+        adventurer_txtr1 = adventurer_txt1.get_rect(center=(890, 390))
+        adventurer_txt2 = smolfont.render(" VENTU ER!", True, grey)
+        adventurer_txtr2 = adventurer_txt2.get_rect(center=(890, 390))
+        adventurer_txt3 = font.render("ADVENTURER!!!", True, white)
+        adventurer_txtr3 = adventurer_txt3.get_rect(center=(890, 390))
+        ohgood_txt = font.render("Oh good, your awake...", True, white)
+        ohgood_txtr = ohgood_txt.get_rect(center=(890, 390))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
             
         screen.fill(black)
-        screen.blit(advgs, advgsrect)
+        screen.blit(adventurer_txt1, adventurer_txtr1)
         if starttime == 0:
             starttime = pygame.time.get_ticks()
         elapsed = pygame.time.get_ticks()-starttime
         if elapsed >= 1000 and elapsed < 4000:
             screen.fill(black)
-            screen.blit(advsgs, advsgsrect)
+            screen.blit(adventurer_txt2, adventurer_txtr2)
         elif elapsed >= 4000 and elapsed < 5000:
             screen.fill(black)
-            screen.blit(advc, advcrect)
+            screen.blit(adventurer_txt3, adventurer_txtr3)
         elif elapsed >= 5000 and elapsed < 6000:
             screen.fill(black)
-            screen.blit(ohgood, ohgoodrect)
+            screen.blit(ohgood_txt, ohgood_txtr)
         elif elapsed >= 6000:
             return "naming"
             
@@ -184,14 +183,14 @@ def intro():
 #naming the character
 def naming():
     global name
-    usertxt = ""
+    user_txt = ""
     name = ""
     q = ""
     while True:
         #non global variables
         remember = font.render("Do you remember your name was before?", True, white)
-        confirmbtn = font.render("Confirm", True, white)
-        confirmbtnr = confirmbtn.get_rect(center=(165, 225))
+        confirm_btn = font.render("Confirm", True, white)
+        confirm_btnr = confirm_btn.get_rect(center=(165, 225))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -199,28 +198,28 @@ def naming():
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
-                    usertxt = usertxt[:-1]
+                    user_txt = user_txt[:-1]
                 elif event.key == pygame.K_RETURN:
                     q = ""
-                elif len(usertxt) < 20:
-                    usertxt += event.unicode
+                elif len(user_txt) < 20:
+                    user_txt += event.unicode
                 
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if confirmbtnr.collidepoint(event.pos):
-                    name = usertxt
-                    usertxt = ""
+                if confirm_btnr.collidepoint(event.pos):
+                    name = user_txt
+                    user_txt = ""
                     #print (name)
                     return "main"
         
-        namep2 = font.render(usertxt, True, white)
+        namep2 = font.render(user_txt, True, white)
 
         screen.fill(black)
         screen.blit(remember, (100, 100))
         screen.blit(namep2, (100, 150))
 
-        if len(usertxt) >= 3:
-            screen.blit(confirmbtn, confirmbtnr)
+        if len(user_txt) >= 3:
+            screen.blit(confirm_btn, confirm_btnr)
 
         pygame.display.flip()
         clock.tick(30)
