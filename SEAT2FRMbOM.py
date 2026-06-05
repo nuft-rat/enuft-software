@@ -9,6 +9,7 @@ pygame.font.init()
 
 WINDOW_WIDTH = 1780
 WINDOW_HEIGHT = 780
+print ("67")
 
 clock = pygame.time.Clock()
 
@@ -18,6 +19,7 @@ pygame.display.set_caption("Welcome to the DUNGEON")
 #global variables
 starttime = 0
 elapsed = pygame.time.get_ticks()
+directions = ["north", "south", "east", "west"]
 
 #font
 font = pygame.font.SysFont("Arial", 40)
@@ -32,37 +34,41 @@ grey = (130, 130, 130)
 #classes
 #room
 class room:
-    def __init__(self, name, doors, joins):
+    def __init__(self, name, doors, joins, description):
         self.name = name
         self.doors = doors
         self.joins = joins
+        self.description = description
+    
+    #def ioejf(self, direction):
+
 
 #rooms
-spawnroom0 = room("origination point", [1, 0, 0, 0], [1, -1, -1, -1])
+spawnroom0 = room("origination point", [1, 0, 0, 0], [1, -1, -1, -1], "")
 rooms.append(spawnroom0)
-armoryroom1 = room("armory room", [1, 0, 0, 0], [2, -1, -1, -1])
+armoryroom1 = room("armory room", [1, 0, 0, 0], [2, -1, -1, -1], "")
 rooms.append(armoryroom1)
-dungeonentrance2 = room("dungeon entrance", [1, 0, 0, 0], [3, -1,-1, -1])
+dungeonentrance2 = room("dungeon entrance", [1, 0, 0, 0], [3, -1,-1, -1], "")
 rooms.append(dungeonentrance2)
-room3 = room("the mooy room", [0, 1, 0, 1], [-1, 4, -1, 5])
+room3 = room("the mooy room", [0, 0, 1, 1], [-1, -1, 4, 5], "")
 rooms.append(room3)
-room4 = room("puzzel room", [0, 0, 0, 1], [-1, -1, -1, 3])
+room4 = room("puzzel room", [0, 0, 0, 1], [-1, -1, -1, 3], "")
 rooms.append(room4)
-room5 = ("room", [1, 0, 0, 1], [6, -1, 7, 3])
+room5 = room("room", [1, 0, 0, 1], [6, -1, 7, 3], "")
 rooms.append(room5)
-room6 = room("mooy ritural room", [0, 1, 1, 1], (-1, 8, 5, 9))
+room6 = room("mooy ritural room", [0, 1, 1, 1], [-1, 8, 5, 9], "")
 rooms.append(room6)
-secretroom7 = ("secret exit!", [1, 0, 0, 0], [5, -1, -1,-1])
+secretroom7 = room("secret exit!", [1, 0, 0, 0], [5, -1, -1,-1], "")
 rooms.append(secretroom7)
-room8 = ("puzzel room", [0, 0, 0, 1], [-1, -1, -1, 6])
+room8 = room("puzzel room", [0, 0, 0, 1], [-1, -1, -1, 6], "")
 rooms.append(room8)
-room9 = ("room", [0, 1, 0, 1], [-1, 6, -1, 10])
+room9 = room("room", [0, 1, 0, 1], [-1, 6, -1, 10], "")
 rooms.append(room9)
-room10 = ("room", [1, 1, 0, 0], [-1, 10, -1, 11])
+room10 = room("room", [1, 1, 0, 0], [-1, 10, -1, 11], "")
 rooms.append(room10)
-fairyroom11 = ("fairy room", [1, 1, 0, 0], [12, 10, -1, -1])
+fairyroom11 = room("fairy room", [1, 1, 0, 0], [12, 10, -1, -1], "")
 rooms.append(fairyroom11)
-bloodroom12 = ("bloodroom", [0, 0, 0, 0], [-1, -1, -1, -1])
+bloodroom12 = room("bloodroom", [0, 0, 0, 0], [-1, -1, -1, -1], "")
 rooms.append(bloodroom12)
 #print(rooms)
 
@@ -70,21 +76,8 @@ rooms.append(bloodroom12)
 class Adventurer: 
     def __init__(self): 
         self.room = 0
+        self.name = ""
         self.objects = []
-        
-    # Set up the character
-    def set_up_character(self):
-            abcremember = input("Do you remember your name? ")
-
-            if abcremember == "no":
-                self.name = input("Then what would you like me to call you? ")
-                
-            elif abcremember == "yes":
-                self.name = input("Then what is your name adventurer? ")
-            
-            else:
-                #kill player INSTANTLY
-                pass
         
     def describe(self):
         print (f"Your name: {self.name}")
@@ -149,14 +142,12 @@ def titlescreen():
         pygame.display.flip()
         clock.tick(30)
 
-#intro
+#intro sequence
 def intro():
-    global state
     screen.fill(black)
     starttime = 0
     while True:
         #non global variables
-        adventurer = Adventurer()
         advgs = smolfont.render("A  en   er", True, grey)
         advgsrect = advgs.get_rect(center=(890, 390))
         advsgs = smolfont.render(" VENTU ER!", True, grey)
@@ -185,20 +176,22 @@ def intro():
             screen.fill(black)
             screen.blit(ohgood, ohgoodrect)
         elif elapsed >= 6000:
-            state = "naming"
-            break
+            return "naming"
             
         pygame.display.flip()
         clock.tick(30)
 
 #naming the character
 def naming():
-    global pname
+    global name
+    usertxt = ""
     name = ""
+    q = ""
     while True:
         #non global variables
-        remember = font.render("Do you remember your name?", True, white)
-
+        remember = font.render("Do you remember your name was before?", True, white)
+        confirmbtn = font.render("Confirm", True, white)
+        confirmbtnr = confirmbtn.get_rect(center=(165, 225))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -206,30 +199,83 @@ def naming():
             
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
-                    name = name[:-1]
+                    usertxt = usertxt[:-1]
                 elif event.key == pygame.K_RETURN:
-                    pname = name
-                    name = ""
-                else:
-                    name += event.unicode
-        
+                    q = ""
+                elif len(usertxt) < 20:
+                    usertxt += event.unicode
+                
 
-        namep2 = font.render(name, True, white)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if confirmbtnr.collidepoint(event.pos):
+                    name = usertxt
+                    usertxt = ""
+                    #print (name)
+                    return "main"
+        
+        namep2 = font.render(usertxt, True, white)
 
         screen.fill(black)
         screen.blit(remember, (100, 100))
         screen.blit(namep2, (100, 150))
-    
+
+        if len(usertxt) >= 3:
+            screen.blit(confirmbtn, confirmbtnr)
+
         pygame.display.flip()
         clock.tick(30)
 
 def main():
+    adventurer.name = name
+    btn_w, btn_h = 140, 60
+    north_rect = pygame.Rect(WINDOW_WIDTH // 2 - btn_w // 2, 450, btn_w, btn_h)
+    south_rect = pygame.Rect(WINDOW_WIDTH // 2 - btn_w // 2, 610, btn_w, btn_h)
+    east_rect  = pygame.Rect(WINDOW_WIDTH // 2 + btn_w,     530, btn_w, btn_h)
+    west_rect  = pygame.Rect(WINDOW_WIDTH // 2 - btn_w * 2, 530, btn_w, btn_h)
+    buttons = {
+        0: {"rect": north_rect, "text": "NORTH"},
+        1: {"rect": south_rect, "text": "SOUTH"},
+        2: {"rect": east_rect,  "text": "EAST"},
+        3: {"rect": west_rect,  "text": "WEST"}
+    }
     while True:
+        screen.fill(black)
+        current_room_id = adventurer.room
+        current_room = rooms[current_room_id]
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return "quit"
-            
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    for direction_index, button_data in buttons.items():
+                        if button_data["rect"].collidepoint(event.pos):
+                            
+                            destination_room = current_room.joins[direction_index]
+                            
+                            if destination_room != -1:
+                                adventurer.room = destination_room
+                                print(f"Moved to: {rooms[destination_room].name}")
+                            else:
+                                print("Ouch! You walked straight into a wall.")
         
+        room_title = font.render(f"Room: {current_room.name.upper()}", True, white)
+        screen.blit(room_title, (100, 50))
+        
+        player_info = smolfont.render(f"Adventurer: {adventurer.name} | Room ID: {current_room_id}", True, grey)
+        screen.blit(player_info, (100, 110))
+
+        for direction_index, button_data in buttons.items():
+            path_exists = current_room.joins[direction_index] != -1
+            
+            button_color = grey if path_exists else (40, 40, 40)
+            text_color = white if path_exists else grey
+
+            pygame.draw.rect(screen, button_color, button_data["rect"])
+        
+            btn_txt = smolfont.render(button_data["text"], True, text_color)
+            txt_rect = btn_txt.get_rect(center=button_data["rect"].center)
+            screen.blit(btn_txt, txt_rect)
 
         pygame.display.flip()
         clock.tick(30)
@@ -243,9 +289,11 @@ while True:
     elif state == "term":
         state = termwarning()
     elif state == "intro":
-        state == intro()
+        state = intro()
     elif state == "naming":
         state = naming()
+    elif state == "main":
+        state = main()
     elif state == "quit":
         break
 
