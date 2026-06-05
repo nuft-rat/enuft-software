@@ -39,9 +39,6 @@ class room:
         self.doors = doors
         self.joins = joins
         self.description = description
-    
-    #def ioejf(self, direction):
-
 
 #rooms
 # [north, south, east, west]
