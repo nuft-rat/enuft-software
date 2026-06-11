@@ -158,6 +158,8 @@ medium_enemy = Enemy("Skaggs", 50, 8, 9)
 enemies.append(medium_enemy)
 heavy_enemy = Enemy("Friggin Bartholemule The 8th yo!", 70, 12, 11)
 enemies.append(heavy_enemy)
+innocent_fairy = Enemy("An Innocent Fairy", 60, 0, 10)
+enemies.append(innocent_fairy)
 
 #weapons
 weapons_pool = {
@@ -327,6 +329,7 @@ def main():
             adventurer.hp = adventurer.max_hp
             adventurer.weapon = Weapon("Fists", 0, 0)
             adventurer.has_chosen_weapon = False
+            adventurer.objects = []
             enemies_killed = 0
             
             for enemy in enemies:
@@ -346,7 +349,9 @@ def main():
             adventurer.hp = adventurer.max_hp
             adventurer.weapon = Weapon("Fists", 0, 0)
             adventurer.has_chosen_weapon = False
+            adventurer.objects = []
             enemies_killed = 0
+            
             for enemy in enemies:
                 enemy.hp = enemy.max_hp
                 enemy.is_alive = True
@@ -479,6 +484,9 @@ def main():
                                 if enemies_killed == 1:
                                     adventurer.objects.append("mooy key")
                                     combat_log.append("You found a mooy key on Jenkins corpse.")
+                                if enemies_killed == 3:
+                                    adventurer.objects.append("blood key")
+                                    combat_log.append("The fairys blood coagulates into a key.")
 
                             player_last_attack = now
                     
@@ -514,7 +522,9 @@ def main():
                                         required_key = current_room.locked_door[direction_name]
                                         if required_key in adventurer.objects:
                                             del current_room.locked_door[direction_name]
-                                            adventurer.objects.remove("mooy key")
+                                            for i in adventurer.objects:
+                                                if i == "mooy key":
+                                                    adventurer.objects.remove("mooy key")
                                             adventurer.room = destination_room
                                             combat_log.append(f"You used the {required_key} and unlocked the door!")
                                             combat_log.append("The key disintergrated after the door opened.")
@@ -523,9 +533,9 @@ def main():
                                     else:
                                         adventurer.room = destination_room
 #room move confirmation - debug
-#                                print(f"Moved to: {rooms[destination_room].name}")
-#                            else:
-#                                print("No room there")
+#                                        print(f"Moved to: {rooms[destination_room].name}")
+#                                    else:
+#                                        print("No room there")
         
         room_title = font.render(f"Room: {current_room.name.upper()}", True, white)
         screen.blit(room_title, (100, 50))
